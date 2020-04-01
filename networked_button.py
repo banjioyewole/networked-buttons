@@ -1,6 +1,7 @@
 from sense_hat import SenseHat, ACTION_PRESSED, ACTION_HELD, ACTION_RELEASED
 from time import sleep
 from time import time
+from gem_led_patterns import *
 import requests
 sense = SenseHat()
 
@@ -23,6 +24,7 @@ long_press = 2
 
 def preform_action(direction, press_type):
     print("called preform_action")
+    direction = "core" if direction == "middle" else direction
     if len(last_direction) > 0:
         pass
     else:
@@ -38,17 +40,23 @@ while True:
     if event.action == ACTION_PRESSED:
       # Check which direction
       last_direction = event.direction
-      if event.direction == "up":
-        sense.show_letter("U")      # Up arrow
-      elif event.direction == "down":
-        sense.show_letter("D")      # Down arrow
-      elif event.direction == "left":
-        sense.show_letter("L")      # Left arrow
-      elif event.direction == "right":
-        sense.show_letter("R")      # Right arrow
-      elif event.direction == "core":
-        sense.show_letter("C")      # Enter key
       preform_action(event.direction, single_press)
+
+      if event.direction == "up":
+        # sense.show_letter("U")      # Up arrow
+        quick_up()
+      elif event.direction == "down":
+        # sense.show_letter("D")      # Down arrow
+        quick_down()
+      elif event.direction == "left":
+        # sense.show_letter("L")      # Left arrow
+        quick_homekit()
+      elif event.direction == "right":
+        # sense.show_letter("R")      # Right arrow
+        quick_homekit()
+    elif event.direction == "middle":
+        # sense.show_letter("C")      # Enter key
+        quick_gong()
 
     # elif event.action == ACTION_HELD:
         # preform_action(event.direction, long_press)
@@ -61,5 +69,5 @@ while True:
 
 
       # Wait a while and then clear the screen
-    sleep(0.5)
-    sense.clear()
+    # sleep(0.5)
+    # sense.clear()

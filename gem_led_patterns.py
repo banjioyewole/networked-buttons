@@ -72,6 +72,17 @@ u,e,e,p,p,p,e,e,
 u,e,e,e,e,e,e,e,
 ]
 
+gong_2 = [
+e,e,p,p,p,p,e,e,
+e,p,p,p,p,p,p,e,
+p,p,p,p,p,p,p,p,
+p,p,p,p,p,p,p,p,
+p,p,p,p,p,p,p,p,
+p,p,p,p,p,p,p,p,
+e,p,p,p,p,p,p,e,
+e,e,p,p,p,p,e,e,
+]
+
 dark = [
 e,e,e,e,e,e,e,e,
 e,e,e,e,e,e,e,e,
@@ -161,9 +172,27 @@ def display_image(image, scroll_up, fades_out, apply_gradient):
 	if(fades_out):
 		fade_out()
 
+
+def quick_homekit():
+	sense.low_light = False
+	display_image(home_1, True, True, True)
+
+def quick_up():
+	sense.low_light = False
+	display_image(heat, True, True, True)
+
+def quick_down():
+	sense.low_light = False
+	display_image(cool, False, True, True)
+
+def quick_gong():
+	sense.low_light = False
+	display_image(gong_2, None, True, True)
+
 #RUNNABLE
 
 display_image(dark, None, False, False)
+
 
 if(len(sys.argv) > 1):
 	arg = sys.argv[1].lower()
