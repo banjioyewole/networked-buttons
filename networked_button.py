@@ -1,5 +1,6 @@
-from sense_hat import SenseHat
+from sense_hat import SenseHat, ACTION_PRESSED, ACTION_HELD, ACTION_RELEASED
 from time import sleep
+from time import time
 import requests
 sense = SenseHat()
 
@@ -8,27 +9,33 @@ w = (255, 255, 255)
 
 sense.clear()
 
-base_url = "http://localhost/api/"
+# http://yourHomebridgeServerIp:webhook_port/?accessoryId=theAccessoryIdToTrigger&state=NEWSTATE
+print("Did Start Networked-Button")
+base_url = "http://localhost:"
+webhook_port = "7278"
 
-pressed_counter = 0
 last_direction = ""
+# last_press_time = time()
 
-def preform_action(direction, press_durration):
-    long_press = press_durration >= 2
+single_press = 0
+double_press = 1
+long_press = 2
+
+def preform_action(direction, press_type):
+    print("called preform_action")
     if len(last_direction) > 0:
         pass
     else:
         return
-    api_path = direction
-    api_path = ("double-" if long_press else "") + api_path
-    r = requests.get(base_url+api_path, params={})
+    formed_base_url = base_url + webhook_port
+    r = requests.get(formed_base_url, params={ "accessoryId" : "sapphire_joystick" , "buttonName": direction.capitalize(), "event" : press_type })
 
 
 while True:
 
   for event in sense.stick.get_events():
     # Check if the joystick was pressed
-    if event.action == "pressed":
+    if event.action == ACTION_PRESSED:
       # Check which direction
       last_direction = event.direction
       if event.direction == "up":
@@ -39,11 +46,20 @@ while True:
         sense.show_letter("L")      # Left arrow
       elif event.direction == "right":
         sense.show_letter("R")      # Right arrow
-      elif event.direction == "middle":
-        sense.show_letter("M")      # Enter key
-    else:
-        preform_action(last_direction, pressed_counter)
-        pressed_counter = 0
+      elif event.direction == "core":
+        sense.show_letter("C")      # Enter key
+      preform_action(event.direction, single_press)
+
+    # elif event.action == ACTION_HELD:
+        # preform_action(event.direction, long_press)
+
+    # elif event.action == ACTION_RELEASED:
+    #     if time() - last_press_time < 1 :
+    #         continue
+    #     else:
+    #         preform_action(event.direction, single_press)
+
+
       # Wait a while and then clear the screen
     sleep(0.5)
     sense.clear()
